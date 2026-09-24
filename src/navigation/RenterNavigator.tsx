@@ -3,12 +3,13 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Home, Search, Calendar, MessageSquare, User } from 'lucide-react-native';
 import { RenterDashboardScreen } from '../screens/renter/RenterDashboardScreen';
 import { BrowseVehiclesScreen } from '../screens/renter/BrowseVehiclesScreen';
+import { BookingsScreen } from '../screens/renter/BookingsScreen'; // Make sure this is imported
 import { COLORS } from '../constants/theme';
 import { View } from 'react-native';
 
 const Tab = createBottomTabNavigator();
 
-// Placeholder for screens not yet implemented
+// Temporary placeholder for screens not yet built
 const PlaceholderScreen = () => <View style={{ flex: 1, backgroundColor: COLORS.background }} />;
 
 export const RenterNavigator = () => {
@@ -39,7 +40,7 @@ export const RenterNavigator = () => {
       />
       <Tab.Screen 
         name="Bookings" 
-        component={PlaceholderScreen} 
+        component={BookingsScreen} 
         options={{ tabBarIcon: ({ color }) => <Calendar color={color} size={24} /> }} 
       />
       <Tab.Screen 
