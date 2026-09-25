@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { 
   View, 
   Text, 
@@ -6,8 +6,10 @@ import {
   FlatList, 
   TouchableOpacity, 
   ActivityIndicator,
-  Alert 
+  Alert,
+  Image 
 } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import { Car, Star, Plus } from 'lucide-react-native';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthContext';
@@ -22,15 +24,14 @@ export const ManageFleetScreen = ({ navigation }: any) => {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<TabState>('all');
 
-  useEffect(() => {
-    if (profile?.id) {
-      fetchVehicles();
-    }
-  }, [profile]);
-
-  useEffect(() => {
-    applyFilters();
-  }, [vehicles, activeTab]);
+  // Automatically refresh fleet list whenever this screen comes into focus
+  useFocusEffect(
+    useCallback(() => {
+      if (profile?.id) {
+        fetchVehicles();
+      }
+    }, [profile])
+  );
 
   const fetchVehicles = async () => {
     setLoading(true);
@@ -59,6 +60,10 @@ export const ManageFleetScreen = ({ navigation }: any) => {
     setFilteredVehicles(result);
   };
 
+  React.useEffect(() => {
+    applyFilters();
+  }, [vehicles, activeTab]);
+
   const getTabCount = (tab: TabState) => {
     if (tab === 'all') return vehicles.length;
     if (tab === 'active') return vehicles.filter(v => v.is_available).length;
@@ -71,16 +76,17 @@ export const ManageFleetScreen = ({ navigation }: any) => {
       <TouchableOpacity 
         style={styles.card}
         onPress={() => {
-          
-          // Navigation hook for the "Add/Edit Vehicle" screen shown in the UI flow
-          // Navigate to the EditVehicle screen
-          navigation.navigate('EditVehicle', { vehicle: item })
+          navigation.navigate('EditVehicle', { vehicle: item });
         }}
         activeOpacity={0.8}
       >
-        <View style={styles.imagePlaceholder}>
-          <Car size={32} color={COLORS.background} />
-        </View>
+        {item.image_url ? (
+          <Image source={{ uri: item.image_url }} style={styles.carImage} />
+        ) : (
+          <View style={styles.imagePlaceholder}>
+            <Car size={32} color={COLORS.background} />
+          </View>
+        )}
 
         <View style={styles.cardMain}>
           <Text style={styles.carName}>{item.name}</Text>
@@ -98,7 +104,6 @@ export const ManageFleetScreen = ({ navigation }: any) => {
           
           <View style={styles.ratingRow}>
             <Star size={14} color="#F39C12" fill="#F39C12" />
-            {/* Mocking a 4.8 default rating as per the design if none exists */}
             <Text style={styles.ratingText}>4.8</Text> 
           </View>
         </View>
@@ -114,7 +119,7 @@ export const ManageFleetScreen = ({ navigation }: any) => {
         <TouchableOpacity 
           style={styles.addBtn}
           onPress={() => {
-             navigation.navigate('AddVehicle')
+             navigation.navigate('AddVehicle');
           }}
         >
           <Plus size={16} color={COLORS.accent} />
@@ -163,7 +168,7 @@ export const ManageFleetScreen = ({ navigation }: any) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background, // #001D39
+    backgroundColor: COLORS.background,
     paddingHorizontal: 20,
     paddingTop: 60,
   },
@@ -181,14 +186,14 @@ const styles = StyleSheet.create({
   addBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: COLORS.cardBg, // #0A4174
+    backgroundColor: COLORS.cardBg,
     paddingVertical: 8,
     paddingHorizontal: 12,
     borderRadius: 8,
     gap: 6,
   },
   addBtnText: {
-    color: COLORS.accent, // #7BBDE8
+    color: COLORS.accent,
     fontSize: 13,
     fontWeight: '700',
   },
@@ -209,7 +214,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.accent,
   },
   tabText: {
-    color: COLORS.mutedTeal, // #4E8EA2
+    color: COLORS.mutedTeal,
     fontSize: 13,
     fontWeight: '600',
   },
@@ -235,6 +240,12 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.white,
     justifyContent: 'center',
     alignItems: 'center',
+    marginRight: 16,
+  },
+  carImage: {
+    width: 60,
+    height: 60,
+    borderRadius: 12,
     marginRight: 16,
   },
   cardMain: {

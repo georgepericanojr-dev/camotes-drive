@@ -20,6 +20,7 @@ export const EditVehicleScreen = ({ route, navigation }: any) => {
   const [loading, setLoading] = useState(false);
   const [uploadingDoc, setUploadingDoc] = useState(false);
 
+  // Form state pre-populated with current vehicle details
   const [name, setName] = useState(vehicle.name || '');
   const [plateNumber, setPlateNumber] = useState(vehicle.plate_number || '');
   const [type, setType] = useState(vehicle.type || 'Sedan');
@@ -29,6 +30,7 @@ export const EditVehicleScreen = ({ route, navigation }: any) => {
   const [location, setLocation] = useState(vehicle.location || 'Poro, Camotes Islands');
   const [isAvailable, setIsAvailable] = useState(vehicle.is_available ?? true);
 
+  // Upload vehicle papers/documents
   const handleUploadVehicleDoc = async () => {
     try {
       const result = await ImagePicker.launchImageLibraryAsync({
@@ -60,6 +62,7 @@ export const EditVehicleScreen = ({ route, navigation }: any) => {
     }
   };
 
+  // UPDATE Vehicle (U in CRUD)
   const handleUpdate = async () => {
     if (!name || !plateNumber || !dailyRate) {
       Alert.alert('Error', 'Please fill out all required fields.');
@@ -94,33 +97,49 @@ export const EditVehicleScreen = ({ route, navigation }: any) => {
     }
   };
 
+  // DELETE Vehicle with DOUBLE CONFIRMATION
   const handleDelete = () => {
+    // First Confirmation Alert
     Alert.alert(
       'Delete Vehicle',
       'Are you sure you want to delete this vehicle from your fleet?',
       [
         { text: 'Cancel', style: 'cancel' },
         { 
-          text: 'Delete', 
+          text: 'Continue', 
           style: 'destructive', 
-          onPress: async () => {
-            try {
-              setLoading(true);
-              const { error } = await supabase
-                .from('vehicles')
-                .delete()
-                .eq('id', vehicle.id);
+          onPress: () => {
+            // Second Confirmation Alert (Asking Twice)
+            Alert.alert(
+              'Final Confirmation',
+              'This action is permanent and cannot be undone. Do you really want to remove this vehicle?',
+              [
+                { text: 'Cancel', style: 'cancel' },
+                {
+                  text: 'Yes, Delete',
+                  style: 'destructive',
+                  onPress: async () => {
+                    try {
+                      setLoading(true);
+                      const { error } = await supabase
+                        .from('vehicles')
+                        .delete()
+                        .eq('id', vehicle.id);
 
-              if (error) throw error;
+                      if (error) throw error;
 
-              Alert.alert('Deleted', 'Vehicle has been removed.', [
-                { text: 'OK', onPress: () => navigation.goBack() }
-              ]);
-            } catch (err: any) {
-              Alert.alert('Error', err.message);
-            } finally {
-              setLoading(false);
-            }
+                      Alert.alert('Deleted', 'Vehicle has been permanently removed.', [
+                        { text: 'OK', onPress: () => navigation.goBack() }
+                      ]);
+                    } catch (err: any) {
+                      Alert.alert('Error', err.message);
+                    } finally {
+                      setLoading(false);
+                    }
+                  }
+                }
+              ]
+            );
           }
         }
       ]
@@ -129,11 +148,12 @@ export const EditVehicleScreen = ({ route, navigation }: any) => {
 
   return (
     <View style={styles.container}>
+      {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
           <ArrowLeft size={24} color={COLORS.white} />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Edit Vehicle & Docs</Text>
+        <Text style={styles.headerTitle}>Edit Vehicle</Text>
         <TouchableOpacity onPress={handleDelete} style={styles.deleteIconBtn}>
           <Trash2 size={20} color="#FF4D4D" />
         </TouchableOpacity>
@@ -153,10 +173,21 @@ export const EditVehicleScreen = ({ route, navigation }: any) => {
         </TouchableOpacity>
 
         <Text style={styles.label}>Vehicle Name</Text>
-        <TextInput style={styles.input} value={name} onChangeText={setName} placeholderTextColor={COLORS.mutedTeal} />
+        <TextInput 
+          style={styles.input} 
+          value={name}
+          onChangeText={setName}
+          placeholderTextColor={COLORS.mutedTeal}
+        />
 
         <Text style={styles.label}>Plate Number</Text>
-        <TextInput style={styles.input} value={plateNumber} onChangeText={setPlateNumber} autoCapitalize="characters" placeholderTextColor={COLORS.mutedTeal} />
+        <TextInput 
+          style={styles.input} 
+          value={plateNumber}
+          onChangeText={setPlateNumber}
+          autoCapitalize="characters"
+          placeholderTextColor={COLORS.mutedTeal}
+        />
 
         <Text style={styles.label}>Vehicle Type</Text>
         <TextInput style={styles.input} value={type} onChangeText={setType} placeholderTextColor={COLORS.mutedTeal} />
@@ -168,11 +199,18 @@ export const EditVehicleScreen = ({ route, navigation }: any) => {
         <TextInput style={styles.input} value={fuelType} onChangeText={setFuelType} placeholderTextColor={COLORS.mutedTeal} />
 
         <Text style={styles.label}>Daily Rate (₱)</Text>
-        <TextInput style={styles.input} value={dailyRate} onChangeText={setDailyRate} keyboardType="numeric" placeholderTextColor={COLORS.mutedTeal} />
+        <TextInput 
+          style={styles.input} 
+          value={dailyRate}
+          onChangeText={setDailyRate}
+          keyboardType="numeric" 
+          placeholderTextColor={COLORS.mutedTeal}
+        />
 
         <Text style={styles.label}>Location</Text>
         <TextInput style={styles.input} value={location} onChangeText={setLocation} placeholderTextColor={COLORS.mutedTeal} />
 
+        {/* Toggle Switch */}
         <View style={styles.switchRow}>
           <View>
             <Text style={styles.switchLabel}>Available for Rent</Text>
@@ -186,6 +224,7 @@ export const EditVehicleScreen = ({ route, navigation }: any) => {
           />
         </View>
 
+        {/* Save Button */}
         <TouchableOpacity style={styles.saveBtn} onPress={handleUpdate} disabled={loading}>
           {loading ? (
             <ActivityIndicator color={COLORS.background} />

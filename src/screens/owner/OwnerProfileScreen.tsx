@@ -6,6 +6,8 @@ import { useAuth } from '../../context/AuthContext';
 import { uploadDocument } from '../../lib/api';
 import { LogoutModal } from '../../components/LogoutModal';
 import { COLORS } from '../../constants/theme';
+import * as DocumentPicker from 'expo-document-picker';
+
 
 export const OwnerProfileScreen = () => {
   const { profile, signOut } = useAuth();
@@ -13,30 +15,28 @@ export const OwnerProfileScreen = () => {
   const [uploading, setUploading] = useState(false);
 
   const handleUploadID = async () => {
-    try {
-      const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-      if (!permissionResult.granted) {
-        Alert.alert('Permission Denied', 'Permission to access gallery is required.');
-        return;
-      }
+  try {
+    // Open native file picker for documents/images
+    const result = await DocumentPicker.getDocumentAsync({
+      type: ['application/pdf', 'image/*'], // Allow PDFs and images
+      copyToCacheDirectory: true,
+    });
 
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        quality: 0.8,
-      });
-
-      if (!result.canceled && result.assets && result.assets.length > 0 && profile) {
-        setUploading(true);
-        await uploadDocument(profile.id, 'Owner Government ID', result.assets[0].uri);
-        Alert.alert('Success', 'ID uploaded successfully and is pending admin verification.');
-      }
-    } catch (error: any) {
-      Alert.alert('Error', error.message);
-    } finally {
-      setUploading(false);
+    if (!result.canceled && result.assets && result.assets.length > 0 && profile) {
+      setUploading(true);
+      const file = result.assets[0];
+      
+      // Upload the picked file URI to Supabase storage & documents table
+      await uploadDocument(profile.id, 'Government ID / Verification', file.uri);
+      
+      Alert.alert('Success', 'Document file uploaded successfully and is pending admin review.');
     }
-  };
+  } catch (error: any) {
+    Alert.alert('Error', error.message);
+  } finally {
+    setUploading(false);
+  }
+};
 
   return (
     <View style={styles.container}>
