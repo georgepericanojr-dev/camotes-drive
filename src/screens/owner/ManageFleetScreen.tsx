@@ -71,6 +71,7 @@ export const ManageFleetScreen = ({ navigation }: any) => {
       <TouchableOpacity 
         style={styles.card}
         onPress={() => {
+          
           // Navigation hook for the "Add/Edit Vehicle" screen shown in the UI flow
           // navigation.navigate('EditVehicle', { vehicle: item })
         }}
@@ -112,7 +113,7 @@ export const ManageFleetScreen = ({ navigation }: any) => {
         <TouchableOpacity 
           style={styles.addBtn}
           onPress={() => {
-            // navigation.navigate('AddVehicle')
+             navigation.navigate('AddVehicle')
           }}
         >
           <Plus size={16} color={COLORS.accent} />

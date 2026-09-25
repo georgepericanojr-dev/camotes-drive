@@ -6,6 +6,7 @@ import { BrowseVehiclesScreen } from '../screens/renter/BrowseVehiclesScreen';
 import { BookingsScreen } from '../screens/renter/BookingsScreen'; // Make sure this is imported
 import { COLORS } from '../constants/theme';
 import { View } from 'react-native';
+import { ProfileScreen } from '../screens/renter/ProfileScreen'; // Make sure this is imported
 
 const Tab = createBottomTabNavigator();
 
@@ -50,7 +51,7 @@ export const RenterNavigator = () => {
       />
       <Tab.Screen 
         name="Profile" 
-        component={PlaceholderScreen} 
+        component={ProfileScreen} 
         options={{ tabBarIcon: ({ color }) => <User color={color} size={24} /> }} 
       />
     </Tab.Navigator>

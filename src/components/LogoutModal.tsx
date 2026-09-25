@@ -1,109 +1,97 @@
-
-import React, { useState } from 'react';
-import { View, TextInput, Text, StyleSheet, TouchableOpacity, TextInputProps } from 'react-native';
-import { Eye, EyeOff } from 'lucide-react-native';
+import React from 'react';
+import { Modal, View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { LogOut } from 'lucide-react-native';
 import { COLORS } from '../constants/theme';
 
-interface CustomInputProps extends TextInputProps {
-  label?: string;
-  icon?: React.ReactNode;
-  error?: string;
-  isPassword?: boolean;
+interface LogoutModalProps {
+  visible: boolean;
+  onConfirm: () => void;
+  onCancel: () => void;
 }
 
-export const CustomInput: React.FC<CustomInputProps> = ({
-  label,
-  icon,
-  error,
-  isPassword,
-  ...props
-}) => {
-  const [isFocused, setIsFocused] = useState(false);
-  const [hidePassword, setHidePassword] = useState(isPassword);
-
+export const LogoutModal: React.FC<LogoutModalProps> = ({ visible, onConfirm, onCancel }) => {
   return (
-    <View style={styles.container}>
-      {label && <Text style={styles.label}>{label}</Text>}
-      
-      <View style={[
-        styles.inputWrapper,
-        isFocused && styles.inputWrapperFocused,
-        error && styles.inputWrapperError
-      ]}>
-        {icon && <View style={styles.leftIcon}>{icon}</View>}
-        
-        <TextInput
-          style={styles.input}
-          placeholderTextColor={COLORS.mutedTeal}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
-          secureTextEntry={hidePassword}
-          {...props}
-        />
+    <Modal visible={visible} transparent animationType="fade">
+      <View style={styles.overlay}>
+        <View style={styles.card}>
+          <View style={styles.iconContainer}>
+            <LogOut size={32} color={COLORS.accent} />
+          </View>
+          <Text style={styles.title}>Log out?</Text>
+          <Text style={styles.subtitle}>Are you sure you want to log out?</Text>
 
-        {isPassword && (
-          <TouchableOpacity 
-            style={styles.rightIcon} 
-            onPress={() => setHidePassword(!hidePassword)}
-          >
-            {hidePassword ? (
-              <EyeOff size={20} color={COLORS.mutedTeal} />
-            ) : (
-              <Eye size={20} color={COLORS.mutedTeal} />
-            )}
+          <TouchableOpacity style={styles.logoutBtn} onPress={onConfirm}>
+            <Text style={styles.logoutBtnText}>Log Out</Text>
           </TouchableOpacity>
-        )}
+
+          <TouchableOpacity style={styles.cancelBtn} onPress={onCancel}>
+            <Text style={styles.cancelBtnText}>Cancel</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-      
-      {error && <Text style={styles.errorText}>{error}</Text>}
-    </View>
+    </Modal>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    marginBottom: 16,
-    width: '100%',
+  overlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 24,
   },
-  label: {
+  card: {
+    width: '100%',
+    backgroundColor: COLORS.cardBg,
+    borderRadius: 20,
+    padding: 24,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: COLORS.softTeal,
+  },
+  iconContainer: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: COLORS.background,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  title: {
+    fontSize: 22,
+    fontWeight: '700',
     color: COLORS.white,
-    fontSize: 14,
-    fontWeight: '500',
     marginBottom: 8,
   },
-  inputWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: COLORS.cardBg, // #0A4174
+  subtitle: {
+    fontSize: 14,
+    color: COLORS.textSecondary,
+    marginBottom: 24,
+    textAlign: 'center',
+  },
+  logoutBtn: {
+    width: '100%',
+    paddingVertical: 14,
     borderRadius: 12,
-    height: 54,
-    paddingHorizontal: 16,
     borderWidth: 1,
-    borderColor: COLORS.cardBg,
+    borderColor: COLORS.accent,
+    alignItems: 'center',
+    marginBottom: 12,
   },
-  inputWrapperFocused: {
-    borderColor: COLORS.accent, // #7BBDE8
-  },
-  inputWrapperError: {
-    borderColor: '#FF4D4D', // Danger color
-  },
-  leftIcon: {
-    marginRight: 12,
-  },
-  rightIcon: {
-    marginLeft: 12,
-    padding: 4,
-  },
-  input: {
-    flex: 1,
+  logoutBtnText: {
     color: COLORS.white,
-    fontSize: 15,
-    height: '100%',
+    fontWeight: '600',
+    fontSize: 16,
   },
-  errorText: {
-    color: '#FF4D4D',
-    fontSize: 12,
-    marginTop: 6,
-    marginLeft: 4,
+  cancelBtn: {
+    width: '100%',
+    paddingVertical: 12,
+    alignItems: 'center',
+  },
+  cancelBtnText: {
+    color: COLORS.textSecondary,
+    fontSize: 15,
   },
 });

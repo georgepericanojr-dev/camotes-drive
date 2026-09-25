@@ -5,6 +5,7 @@ import { OwnerDashboardScreen } from '../screens/owner/OwnerDashboardScreen';
 import { ManageFleetScreen } from '../screens/owner/ManageFleetScreen';
 import { COLORS } from '../constants/theme';
 import { View } from 'react-native';
+import { OwnerBookingsScreen } from '../screens/owner/OwnerBookingsScreen';
 
 const Tab = createBottomTabNavigator();
 const PlaceholderScreen = () => <View style={{ flex: 1, backgroundColor: COLORS.background }} />;
@@ -36,7 +37,7 @@ export const OwnerNavigator = () => {
       />
       <Tab.Screen 
         name="Bookings" 
-        component={PlaceholderScreen} 
+        component={OwnerBookingsScreen} 
         options={{ tabBarIcon: ({ color }) => <Calendar color={color} size={24} /> }} 
       />
       <Tab.Screen 

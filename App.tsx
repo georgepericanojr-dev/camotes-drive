@@ -17,7 +17,7 @@ import { RenterNavigator } from './src/navigation/RenterNavigator';
 import { OwnerNavigator } from './src/navigation/OwnerNavigator';
 import { DriverNavigator } from './src/navigation/DriverNavigator';
 import { AdminNavigator } from './src/navigation/AdminNavigator';
-
+import { AddVehicleScreen } from './src/screens/owner/AddVehicleScreen';
 const Stack = createNativeStackNavigator();
 
 const RootNavigator = () => {
@@ -43,6 +43,9 @@ const RootNavigator = () => {
           )}
           {profile?.role === 'owner' && (
             <Stack.Screen name="OwnerRoot" component={OwnerNavigator} />
+          )}
+          {profile?.role === 'owner' && (
+            <Stack.Screen name="AddVehicle" component={AddVehicleScreen} />
           )}
           {profile?.role === 'driver' && (
             <Stack.Screen name="DriverRoot" component={DriverNavigator} />

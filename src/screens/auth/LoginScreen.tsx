@@ -27,7 +27,7 @@ export const LoginScreen = ({ navigation }: any) => {
       setErrorMsg(err.message.includes('Invalid login') ? 'Error: Incorrect email or password.' : err.message);
     } finally {
       setLoading(false);
-    }
+    }                                                                                                                                                                 
   };
 
   return (
@@ -44,7 +44,7 @@ export const LoginScreen = ({ navigation }: any) => {
 
         <CustomInput
           label="Email Address"
-          placeholder="george.pericanojr@gmail.com"
+          placeholder="sample@sample.com"
           value={email}
           onChangeText={setEmail}
           icon={<Mail size={20} color={COLORS.mutedTeal} />}

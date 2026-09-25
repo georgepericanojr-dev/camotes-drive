@@ -52,7 +52,34 @@ export const updateBookingStatusByDriver = async (bookingId: string, driverId: s
   if (error) throw error;
   return data;
 };
+// Add this inside src/lib/api.ts
 
+export const createBooking = async (
+  renterId: string, 
+  vehicleId: string, 
+  startDate: string, 
+  endDate: string, 
+  totalPrice: number, 
+  driverId?: string | null
+) => {
+  const { data, error } = await supabase
+    .from('bookings')
+    .insert([
+      {
+        renter_id: renterId,
+        vehicle_id: vehicleId,
+        start_date: startDate,
+        end_date: endDate,
+        total_price: totalPrice,
+        driver_id: driverId || null,
+        status: 'pending', // Starts as pending for the owner to approve
+      }
+    ])
+    .select();
+    
+  if (error) throw error;
+  return data;
+};
 // 4. Admin Approves Document
 export const adminApproveDocument = async (documentId: string) => {
   const { error } = await supabase
