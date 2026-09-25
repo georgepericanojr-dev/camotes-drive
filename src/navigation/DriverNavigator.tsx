@@ -5,6 +5,7 @@ import { DriverDashboardScreen } from '../screens/driver/DriverDashboardScreen';
 import { DriverTripsScreen } from '../screens/driver/DriverTripsScreen';
 import { COLORS } from '../constants/theme';
 import { View } from 'react-native';
+import { DriverProfileScreen } from '../screens/driver/DriverProfileScreen';
 
 const Tab = createBottomTabNavigator();
 const PlaceholderScreen = () => <View style={{ flex: 1, backgroundColor: COLORS.background }} />;
@@ -46,7 +47,7 @@ export const DriverNavigator = () => {
       />
       <Tab.Screen 
         name="Profile" 
-        component={PlaceholderScreen} 
+        component={DriverProfileScreen} 
         options={{ tabBarIcon: ({ color }) => <User color={color} size={24} /> }} 
       />
     </Tab.Navigator>

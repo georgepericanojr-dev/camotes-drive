@@ -6,6 +6,7 @@ import { ManageFleetScreen } from '../screens/owner/ManageFleetScreen';
 import { COLORS } from '../constants/theme';
 import { View } from 'react-native';
 import { OwnerBookingsScreen } from '../screens/owner/OwnerBookingsScreen';
+import { OwnerProfileScreen } from '../screens/owner/OwnerProfileScreen';
 
 const Tab = createBottomTabNavigator();
 const PlaceholderScreen = () => <View style={{ flex: 1, backgroundColor: COLORS.background }} />;
@@ -47,7 +48,7 @@ export const OwnerNavigator = () => {
       />
       <Tab.Screen 
         name="Profile" 
-        component={PlaceholderScreen} 
+        component={OwnerProfileScreen} 
         options={{ tabBarIcon: ({ color }) => <User color={color} size={24} /> }} 
       />
     </Tab.Navigator>
