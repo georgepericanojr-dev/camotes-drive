@@ -22,6 +22,7 @@ export const RegisterScreen = ({ navigation }: any) => {
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [role, setRole] = useState<UserRole>('renter');
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
@@ -30,13 +31,18 @@ export const RegisterScreen = ({ navigation }: any) => {
     setErrorMsg('');
     
     // Form Validation
-    if (!fullName.trim() || !email.trim() || !password.trim() || !phone.trim()) {
+    if (!fullName.trim() || !email.trim() || !password.trim() || !confirmPassword.trim() || !phone.trim()) {
       setErrorMsg('Error: All fields are required.');
       return;
     }
     
     if (password.length < 6) {
       setErrorMsg('Error: Password must be at least 6 characters.');
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setErrorMsg('Error: Passwords do not match.');
       return;
     }
 
@@ -137,6 +143,15 @@ export const RegisterScreen = ({ navigation }: any) => {
           placeholder="Create a secure password"
           value={password}
           onChangeText={setPassword}
+          icon={<Lock size={20} color={COLORS.mutedTeal} />}
+          isPassword
+        />
+
+        <CustomInput
+          label="Confirm Password"
+          placeholder="Re-enter your password"
+          value={confirmPassword}
+          onChangeText={setConfirmPassword}
           icon={<Lock size={20} color={COLORS.mutedTeal} />}
           isPassword
         />

@@ -73,7 +73,8 @@ export const ManageFleetScreen = ({ navigation }: any) => {
         onPress={() => {
           
           // Navigation hook for the "Add/Edit Vehicle" screen shown in the UI flow
-          // navigation.navigate('EditVehicle', { vehicle: item })
+          // Navigate to the EditVehicle screen
+          navigation.navigate('EditVehicle', { vehicle: item })
         }}
         activeOpacity={0.8}
       >

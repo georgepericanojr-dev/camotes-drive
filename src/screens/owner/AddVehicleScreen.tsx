@@ -60,7 +60,7 @@ export const AddVehicleScreen = ({ navigation }: any) => {
     setImages(images.filter((_, index) => index !== indexToRemove));
   };
 
-  const handleSave = async () => {
+ const handleSave = async () => {
     if (!name || !plateNumber || !dailyRate) {
       Alert.alert('Error', 'Please fill out the vehicle name, plate number, and daily rate.');
       return;
@@ -68,9 +68,30 @@ export const AddVehicleScreen = ({ navigation }: any) => {
 
     try {
       setLoading(true);
+      let uploadedImageUrl = null;
 
-      // Optional: Upload images to Supabase Storage bucket named 'vehicles' if needed
-      // For now, we save the vehicle record with the text fields and image array references
+      // If an image was selected, upload it to Supabase Storage first
+      if (images.length > 0) {
+        const fileUri = images[0]; // Take the first image
+        const fileName = `vehicle_${Date.now()}.jpg`;
+        
+        const response = await fetch(fileUri);
+        const blob = await response.blob();
+
+        const { error: uploadError } = await supabase.storage
+          .from('documents') // or your designated vehicle bucket
+          .upload(fileName, blob);
+
+        if (uploadError) throw uploadError;
+
+        const { data: publicURLData } = supabase.storage
+          .from('documents')
+          .getPublicUrl(fileName);
+
+        uploadedImageUrl = publicURLData.publicUrl;
+      }
+
+      // Insert vehicle record with the image URL
       const { error } = await supabase.from('vehicles').insert([
         {
           owner_id: profile?.id,
@@ -82,13 +103,14 @@ export const AddVehicleScreen = ({ navigation }: any) => {
           daily_rate: parseFloat(dailyRate),
           location,
           is_available: isAvailable,
-          status: 'pending' // Requires Admin approval first
+          image_url: uploadedImageUrl, // Saves the uploaded image link!
+          status: 'pending'
         }
       ]);
 
       if (error) throw error;
 
-      Alert.alert('Success', 'Vehicle added and is pending admin approval!', [
+      Alert.alert('Success', 'Vehicle added with photo and pending admin approval!', [
         { text: 'OK', onPress: () => navigation.goBack() }
       ]);
     } catch (error: any) {
