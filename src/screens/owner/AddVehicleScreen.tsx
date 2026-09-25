@@ -98,6 +98,7 @@ export const AddVehicleScreen = ({ navigation }: any) => {
     }
   };
 
+  
   return (
     <View style={styles.container}>
       {/* Header */}
